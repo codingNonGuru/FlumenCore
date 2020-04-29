@@ -1,4 +1,5 @@
 #include "Delegate.hpp"
+#include "Event.hpp"
 
 Delegate::Delegate()
 {
@@ -7,13 +8,10 @@ Delegate::Delegate()
 
 void Delegate::Invoke()
 {
-	for(auto callback = callbacks_.GetStart(); callback != callbacks_.GetEnd(); ++callback)
+	callbacks_.Do([](auto &callback) -> bool
 	{
-		if(callback->empty())
-			continue;
-
-		(*callback)();
-	}
+		callback();
+	});
 }
 
 void Delegate::Add(void (*function)())
@@ -27,16 +25,5 @@ void Delegate::Add(void (*function)())
 
 void Delegate::Clear()
 {
-	for(auto callback = callbacks_.GetStart(); callback != callbacks_.GetEnd(); ++callback)
-	{
-		if(callback->empty())
-			continue;
-
-		callback->clear();
-	}
-
 	callbacks_.Reset();
 }
-
-
-
