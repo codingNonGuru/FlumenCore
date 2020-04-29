@@ -1,5 +1,10 @@
 #pragma once
 
+#include <functional>
+
+#define BREAK return true;
+#define CONTINUE return false;
+
 namespace container
 {
 	typedef int IndexType;
@@ -7,7 +12,7 @@ namespace container
 	template <class ObjectType>
 	class Pool;
 
-	template<class ObjectType>
+	/*template<class ObjectType>
 	class Iterator
 	{
 		friend class Pool <ObjectType>;
@@ -21,8 +26,12 @@ namespace container
 		Iterator(const Pool <ObjectType> &_pool) : pool(_pool)
 		{
 			object = pool.objects_;
-
 			validator = pool.validators;
+
+			if(*validator == false)
+			{
+				(*this)++;
+			}
 		}
 
 	public:
@@ -62,12 +71,17 @@ namespace container
 		{
 			return object;
 		}
-	};
+
+		operator ObjectType *()
+		{
+			return object;
+		}
+	};*/
 	
 	template<class ObjectType>
 	class Pool
 	{
-		friend class Iterator <ObjectType>;
+		//friend class Iterator <ObjectType>;
 
 	private:
 		ObjectType* objects_;
@@ -100,11 +114,13 @@ namespace container
 
 		ObjectType* Get(IndexType index);
 
-		ObjectType* GetStart();
+		//ObjectType* GetStart();
 
 		ObjectType* GetEnd();
 
-		Iterator <ObjectType> GetIterator();
+		//Iterator <ObjectType> GetIterator();
+
+		void Do(std::function <bool (ObjectType &)>);
 
 		IndexType GetSize();
 
@@ -195,11 +211,11 @@ namespace container
 		return objects_ + index;
 	}
 
-	template<class ObjectType>
+	/*template<class ObjectType>
 	ObjectType* Pool<ObjectType>::GetStart()
 	{
 		return objects_;
-	}
+	}*/
 
 	template<class ObjectType>
 	ObjectType* Pool<ObjectType>::GetEnd()
@@ -207,10 +223,24 @@ namespace container
 		return (objects_ + capacity_);
 	}
 
-	template<class ObjectType>
+	/*template<class ObjectType>
 	Iterator <ObjectType> Pool<ObjectType>::GetIterator()
 	{
 		return Iterator <ObjectType> (*this);
+	}*/
+
+	template<class ObjectType>
+	void Pool<ObjectType>::Do(std::function <bool (ObjectType &)> work)
+	{
+		auto validator = validators;
+		for(auto object = objects_; object != objects_ + capacity_; ++object, ++validator)
+		{
+			if(*validator == false)
+				continue;
+
+			if(work(*object) == true)
+				break;
+		}
 	}
 
 	template<class ObjectType>
