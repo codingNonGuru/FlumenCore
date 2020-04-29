@@ -2,7 +2,7 @@
 
 Delegate::Delegate()
 {
-	callbacks_.Initialize(4);
+	callbacks_.Initialize(8);
 }
 
 void Delegate::Invoke()
@@ -34,6 +34,8 @@ void Delegate::Clear()
 
 		callback->clear();
 	}
+
+	callbacks_.Reset();
 }
 
 

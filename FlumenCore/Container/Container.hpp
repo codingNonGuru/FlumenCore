@@ -18,9 +18,9 @@ namespace container
 	public:
 		virtual void* GetData() {return nullptr;}
 
-		virtual unsigned long GetMemorySize() {return 0;}
+		virtual unsigned long GetMemorySize() const {return 0;}
 
-		virtual unsigned long GetMemoryCapacity() {return 0;}
+		virtual unsigned long GetMemoryCapacity() const {return 0;}
 	};
 
 	class Matrix : public Container
@@ -30,9 +30,9 @@ namespace container
 
 		virtual int GetHeight() const {return 0;}
 
-		virtual unsigned long GetMemorySize() {return 0;}
+		virtual unsigned long GetMemorySize() const {return 0;}
 
-		virtual unsigned long GetMemoryCapacity() {return 0;}
+		virtual unsigned long GetMemoryCapacity() const {return 0;}
 	};
 
 	template<class O>

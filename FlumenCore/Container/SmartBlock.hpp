@@ -12,19 +12,40 @@ namespace container
         int size;
 
     public:
-        SmartBlock() {}
+        SmartBlock() : size(0) {}
 
-        ObjectType * GetFirst() const 
+        ObjectType * Get(int index)
+        {
+            return block.GetStart() + index;
+        }
+
+        ObjectType * Find(const ObjectType &object) 
+		{
+			for(auto iterator = GetFirst(); iterator != GetLast(); ++iterator)
+			{
+				if(*iterator == object)
+					return iterator;
+			}
+
+			return nullptr;
+		}
+
+		ObjectType * operator [] (int index)
+		{
+			return block[index];
+		}
+
+        ObjectType * GetFirst()  
         {
             return block.GetStart();
         }
 
-        ObjectType * GetLast() const 
+        ObjectType * GetLast() 
         {
             return block.GetStart() + size;
         }
 
-        ObjectType * Allocate()
+        ObjectType * Add()
         {
             if(size == Capacity)
                 return nullptr;

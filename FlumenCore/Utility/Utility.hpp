@@ -3,8 +3,9 @@
 #include <math.h>
 #include <random>
 
-#include "../Conventions.hpp"
-//#include "Utility/Color.hpp"
+#include <glm/glm.hpp>
+
+typedef glm::vec2 Float2;
 
 namespace utility
 {

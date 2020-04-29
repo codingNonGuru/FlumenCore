@@ -1,39 +1,60 @@
 #pragma once
 
-#include "Container.hpp"
+#include <iostream>
+#include <initializer_list>
+#include <functional>
+
+#include "FlumenCore/Container/Container.hpp"
+
+#include "FlumenCore/Utility/Utility.hpp"
 
 namespace container
 {
-	template<class O, typename I = int>
+	template<class O>
 	class Array : public Container
 	{
 		O* objects_;
 
-		I capacity_;
+		int capacity_;
 
-		I size_;
+		int size_;
 
 		unsigned long memorySize_;
 
 		virtual void* GetData() {return (void*)objects_;}
 
 	public:
-		Array() : objects_(nullptr), size_(0), capacity_(0) {}
+		Array() : objects_(nullptr), size_(0), capacity_(0), memorySize_(0) {}
 
-		Array(I capacity) : capacity_(capacity), size_(0)
+		Array(int capacity) : capacity_(capacity), size_(0)
 		{
 			memorySize_ = capacity_ * sizeof(O);
-			objects_ = new O[capacity_];
+			objects_ = (O*)malloc(memorySize_);// new O[capacity_];
 
 			//MemoryLog::accrue(memorySize_);
 		}
 
-		void Initialize(I capacity) {
+		Array(std::initializer_list<O> list)
+		{
+			size_ = list.size();
+			capacity_ = list.size();
+			memorySize_ = list.size() * sizeof(O);
+			objects_ = (O*)malloc(memorySize_);
+
+			auto object = objects_;
+			for(auto iterator = list.begin(); iterator != list.end(); ++iterator, ++object)
+			{
+				*object = *iterator;
+			}
+		}
+
+		void Initialize(int capacity) 
+		{
 			capacity_ = capacity;
-			memorySize_ = capacity_ * sizeof(O);
 			size_ = 0;
 			Destroy();
-			objects_ = new O[capacity_];
+			memorySize_ = capacity_ * sizeof(O);
+			objects_ = (O*)malloc(memorySize_); //new O[capacity_];
 
 			//MemoryLog::accrue(memorySize_);
 		}
@@ -48,7 +69,12 @@ namespace container
 			return size_ == capacity_;
 		}
 
-		O *const Allocate(I count)
+		bool IsEmpty() const
+		{
+			return size_ == 0;
+		}
+
+		O *const Allocate(int count)
 		{
 			O *const newObject = (objects_ + size_);
 			size_ += count;
@@ -63,28 +89,42 @@ namespace container
 			O *const newObject = (objects_ + size_);
 			size_++;
 
+			*newObject = O();
+
 			return newObject;
 		}
 
-		void AllocateFully()
-		{
-			size_ = capacity_;
-		}
-
-		template<class DerivedType>
-		O *const Allocate()
+		O * Add()
 		{
 			if(size_ == capacity_)
 				return nullptr;
 
-			O *const newObject = (objects_ + size_);
-			*(long*)newObject = *(long*)&DerivedType();
+			O *newObject = (objects_ + size_);
 			size_++;
 
 			return newObject;
 		}
 
-		O& operator[] (I index)
+		void Fill()
+		{
+			size_ = capacity_;
+		}
+
+		/*template<class DerivedType>
+		O * Add()
+		{
+			if(size_ == capacity_)
+				return nullptr;
+
+			O * newObject = (objects_ + size_);
+			//*newObject = DerivedType();
+			*(long*)newObject = *(long*)&DerivedType();
+			size_++;
+
+			return newObject;
+		}*/
+
+		O& operator[] (int index)
 		{
 			if(index < 0)
 				index += capacity_;
@@ -94,12 +134,33 @@ namespace container
 			return *(objects_ + index);
 		}
 
-		O* Get(I index) const
+		O* Get(int index) const
 		{
 			if(index < 0)
 				index += capacity_;
 			if(index >= capacity_)
 				index -= capacity_;
+
+			return objects_ + index;
+		}
+
+		O* Find(O object) const
+		{
+			for(auto iterator = GetStart(); iterator != GetEnd(); ++iterator)
+			{
+				if(*iterator == object)
+					return iterator;
+			}
+
+			return nullptr;
+		}
+
+		O* GetRandom()
+		{
+			if(size_ == 0)
+				return nullptr;
+
+			auto index = utility::GetRandom(0, size_ - 1);
 
 			return objects_ + index;
 		}
@@ -123,22 +184,66 @@ namespace container
 			return object + 1;
 		}
 
-		I GetSize() const
+		void Iterate(std::function<void(O*)> function)
+		{
+			for(auto iterator = GetStart(); iterator != GetEnd(); ++iterator)
+			{
+				function(iterator);
+			}
+		}
+
+		void SortDescendantly()
+		{
+			for(int j = 0; j <= GetSize() / 2; ++j)
+			{
+				for(int i = 0; i < GetSize() - 1; ++i)
+				{
+					auto next = Get(i + 1);
+					auto current = Get(i);
+					if(*next > *current)
+					{
+						auto swap = *next;
+						*next = *current;
+						*current = swap;
+					}
+				}
+			}
+		}
+
+		void SortAscendantly()
+		{
+			for(int j = 0; j <= GetSize() / 2; ++j)
+			{
+				for(int i = 0; i < GetSize() - 1; ++i)
+				{
+					auto next = Get(i + 1);
+					auto current = Get(i);
+					if(*next < *current)
+					{
+						auto swap = *next;
+						*next = *current;
+						*current = swap;
+					}
+				}
+			}
+		}
+
+		int GetSize() const
 		{
 			return size_;
 		}
 
-		I GetCapacity() const
+		int GetCapacity() const
 		{
 			return capacity_;
 		}
 
-		unsigned long GetMemorySize() const
+		unsigned long GetMemorySize() const override
 		{
 			return size_ * sizeof(O);
 		}
 
-		virtual unsigned long GetMemoryCapacity() const
+		unsigned long GetMemoryCapacity() const override
 		{
 			return capacity_ * sizeof(O);
 		}
@@ -146,7 +251,7 @@ namespace container
 		void Destroy()
 		{
 			if(objects_ != nullptr)
-				delete[] objects_;
+				free(objects_);
 
 			objects_ = nullptr;
 

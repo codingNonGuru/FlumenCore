@@ -10,7 +10,18 @@ namespace container
 	public:
 		Block() {}
 
-		ObjectType* Find(int index) 
+		ObjectType* Find(const ObjectType &object) 
+		{
+			for(auto iterator = GetStart(); iterator != GetEnd(); ++iterator)
+			{
+				if(*iterator == object)
+					return iterator;
+			}
+
+			return nullptr;
+		}
+
+		const ObjectType * Get(int index) const 
 		{
 			return objects_ + index;
 		}
@@ -20,12 +31,12 @@ namespace container
 			return objects_ + index;
 		}
 
-		ObjectType* GetStart() const
+		ObjectType* GetStart() 
 		{
 			return objects_;
 		}
 
-		ObjectType* GetEnd() const
+		ObjectType* GetEnd() 
 		{
 			return objects_ + Capacity;
 		}

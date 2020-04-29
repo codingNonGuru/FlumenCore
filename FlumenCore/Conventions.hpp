@@ -55,12 +55,13 @@ typedef unsigned int Length;
 
 #include "Container/Container.hpp"
 #include "Container/Map.hpp"
-#include "Container/List.hpp"
+//#include "Container/List.hpp"
 #include "Container/String.hpp"
 #include "Container/Array.hpp"
 #include "Container/Pool.hpp"
 #include "Container/Grid.hpp"
 #include "Container/Block.hpp"
+#include "Container/SmartBlock.hpp"
 
 typedef container::String<16> ShortWord;
 typedef container::String<32> Word;

@@ -18,33 +18,45 @@ namespace container
 
 		unsigned long memorySize_;
 
+		bool isBounded;
+
 	public:
 		ObjectType* operator() (int x, int y)
 		{
-			if(x < 0)
-				x += width_;
-			else if(x >= width_)
-				x -= width_;
-
-			if(y < 0)
-				y += height_;
-			else if(y >= height_)
-				y -= height_;
-
-			return objects_ + (width_ * y + x);
+			return Get(x, y);
 		}
 
 		ObjectType* Get(int x, int y)
 		{
 			if(x < 0)
-				x = width_ - 1;
+			{
+				if(isBounded)
+					return nullptr;
+
+				x += width_;
+			}
 			else if(x >= width_)
-				x = 0;
+			{
+				if(isBounded)
+					return nullptr;
+
+				x -= width_;
+			}
 
 			if(y < 0)
-				y = height_ - 1;
+			{
+				if(isBounded)
+					return nullptr;
+
+				y += height_;
+			}
 			else if(y >= height_)
-				y = 0;
+			{
+				if(isBounded)
+					return nullptr;
+
+				y -= height_;
+			}
 
 			return objects_ + (width_ * y + x);
 		}
@@ -103,6 +115,8 @@ namespace container
 
 			width_ = 0;
 			height_ = 0;
+
+			isBounded = false;
 		}
 
 		Grid(int columnCount, int rowCount)
@@ -115,6 +129,8 @@ namespace container
 
 			memorySize_ = objectCount_ * sizeof(ObjectType);
 			//MemoryLog::accrue(memorySize_);
+
+			isBounded = false;
 		}
 
 		Grid(Grid<ObjectType> *other)
@@ -134,9 +150,21 @@ namespace container
 
 			memorySize_ = objectCount_ * sizeof(ObjectType);
 			//MemoryLog::accrue(memorySize_);
+
+			isBounded = false;
 		}
 
-		operator *=(float factor)
+		void Bound() 
+		{
+			isBounded = true;
+		}
+
+		void Unbound()
+		{
+			isBounded = false;
+		}
+
+		Grid& operator *=(float factor)
 		{
 			for(auto cell = GetStart(); cell != GetEnd(); ++cell)
 			{

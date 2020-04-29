@@ -49,6 +49,29 @@ namespace container
 			*(values_ + size_) = (char)0;
 		}
 
+		String& operator << (const String &string)
+		{
+			Add(string.values_, string.size_);
+
+			return *this;
+		}
+
+		String& operator << (const char* string)
+		{
+			Add(string, strlen(string));
+
+			return *this;
+		}
+
+		String& operator << (int value)
+		{
+			char valueString[32];
+			sprintf(valueString, "%d", value);
+			Add(valueString, strlen(valueString));
+
+			return *this;
+		}
+
 		char* Get()
 		{
 			return values_;
@@ -64,6 +87,12 @@ namespace container
 			return size_;
 		}
 
+		String GetFirstCharacter()
+		{
+			char characters[] = {values_[0], 0};
+			return characters;
+		}
+
 		operator const char*()
 		{
 			return values_;
@@ -73,5 +102,10 @@ namespace container
 		{
 			return strcmp(other.Get(), this->Get()) == 0;
 		}
+
+		//~String() 
+		//{
+			//std::cout<<(void*)values_<<"\n";
+		//}
 	};
 }

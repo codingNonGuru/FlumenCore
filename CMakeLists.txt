@@ -12,7 +12,7 @@ file(GLOB_RECURSE SOURCE_FILES
 )
 
 include_directories(/home/andrei/Documents/Code/Libraries/glm)
-include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
  
 add_library(Core SHARED ${SOURCE_FILES})
 
