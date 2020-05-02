@@ -13,6 +13,39 @@ namespace container
 	template<class O>
 	class Array : public Container
 	{
+		template<class IteratorType>
+        class Iterator
+        {
+            friend class Array <IteratorType>;
+
+            friend Iterator <IteratorType> begin(Array <IteratorType> &array);
+
+            friend Iterator <IteratorType> end(Array <IteratorType> &array);
+
+            Array <IteratorType> &array;
+
+            IteratorType *element;
+
+            Iterator(Array <IteratorType> &_array, IteratorType *_element) : 
+                array(_array), element(_element)
+            {}
+
+        public:
+            IteratorType & operator *() {return *element;}
+
+            bool operator !=(const Iterator<IteratorType> &other) {return element != other.element;}
+
+            Iterator<IteratorType> & operator++() 
+            {
+				if(element != array.GetEnd())
+				{
+                	element++;
+				}
+
+                return *this;
+            }
+        };
+
 		O* objects_;
 
 		int capacity_;
@@ -257,5 +290,9 @@ namespace container
 
 			//MemoryLog::accrue(-memorySize_);
 		}
+
+		friend Iterator <O> begin(Array <O> &array) {return {array, array.GetStart()};}
+
+        friend Iterator <O> end(Array <O> &array) {return {array, array.GetEnd()};}
 	};
 }

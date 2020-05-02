@@ -1,5 +1,4 @@
 #include "Delegate.hpp"
-#include "Event.hpp"
 
 Delegate::Delegate()
 {
