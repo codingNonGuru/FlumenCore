@@ -9,9 +9,6 @@ namespace container
 {
 	typedef int IndexType;
 
-	template <class ObjectType>
-	class Pool;
-
 	/*template<class ObjectType>
 	class Iterator
 	{
@@ -83,6 +80,58 @@ namespace container
 	{
 		//friend class Iterator <ObjectType>;
 
+		template<class IteratorType>
+		class Iterator
+		{
+			friend class Pool <IteratorType>;
+
+			friend Iterator <IteratorType> begin(Pool <IteratorType> &pool);
+
+			friend Iterator <IteratorType> end(Pool <IteratorType> &pool);
+
+			Pool <IteratorType> &pool;
+
+			IteratorType *element;
+
+			bool *check;
+
+			Iterator(Pool <IteratorType> &_pool, IteratorType *_element) : 
+				pool(_pool), element(_element), check(pool.validators)
+			{
+				if(*check == false)
+				{
+					auto &iterator = *this;
+					iterator++;
+				}
+			}
+
+			Iterator(Pool <IteratorType> &_pool) : 
+				pool(_pool), element(pool.GetEnd()), check(nullptr)
+			{}
+
+		public:
+			IteratorType & operator *() {return *element;}
+
+			bool operator !=(const Iterator<IteratorType> &other) {return element != other.element;}
+
+			Iterator<IteratorType> & operator++() 
+			{
+				while(true)
+				{
+					if(element == pool.GetEnd())
+						break;
+
+					element++;
+					check++;
+
+					if(*check == true)
+						break;
+				}
+
+				return *this;
+			}
+		};
+
 	private:
 		ObjectType* objects_;
 
@@ -98,7 +147,15 @@ namespace container
 
 		unsigned long memorySize_;
 
+		ObjectType* GetStart();
+
+		ObjectType* GetEnd();
+
 	public:
+		friend Iterator <ObjectType> begin(Pool <ObjectType> &pool) {return {pool, pool.objects_};}
+
+        friend Iterator <ObjectType> end(Pool <ObjectType> &pool) {return {pool};}
+
 		Pool();
 
 		Pool(IndexType capacity);
@@ -113,10 +170,6 @@ namespace container
 		void Remove(ObjectType *const object);
 
 		ObjectType* Get(IndexType index);
-
-		//ObjectType* GetStart();
-
-		ObjectType* GetEnd();
 
 		//Iterator <ObjectType> GetIterator();
 

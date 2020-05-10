@@ -40,10 +40,20 @@ namespace utility
 		if(value > maximum)
 		{
 			value = maximum;
-			return;
 		}
+		else if(value < minimum)
+		{
+			value = minimum;
+		}
+	}
 
-		if(value < minimum)
+	void Clamp(int &value, int minimum, int maximum)
+	{
+		if(value > maximum)
+		{
+			value = maximum;
+		}
+		else if(value < minimum)
 		{
 			value = minimum;
 		}

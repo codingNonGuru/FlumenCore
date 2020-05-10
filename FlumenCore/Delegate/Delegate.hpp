@@ -2,49 +2,24 @@
 
 #include "../Conventions.hpp"
 
+class Event;
+
 class Delegate
 {
-	Pool <Callback> callbacks_;
+	Pool <Event> events;
+
 public:
 	Delegate();
 
 	void Invoke();
 
-	template <class ClassType, class ObjectType>
-	void Add(ObjectType*, void (ClassType::*)());
+	Delegate& operator += (Event);
 
-	void Add(void (*)());
+	Delegate& operator += (void (*)());
 
-	template <class ClassType, class ObjectType>
-	void Remove(ObjectType*, void (ClassType::*)());
+	Delegate& operator -= (Event);
+
+	Delegate& operator -= (void (*)());
 
 	void Clear();
 };
-
-template <class ClassType, class ObjectType>
-void Delegate::Add(ObjectType *object, void (ClassType::*function)())
-{
-	auto callback = callbacks_.Add();
-	if(callback == nullptr)
-		return;
-
-	callback->bind(object, function);
-}
-
-template <class ClassType, class ObjectType>
-void Delegate::Remove(ObjectType *object, void (ClassType::*function)())
-{
-	Callback externalCallback(object, function);
-
-	callbacks_.Do([&](auto &callback)
-	{
-		if(externalCallback != callback)
-			CONTINUE;
-
-		callback.clear();
-		callbacks_.Remove(&callback);
-		BREAK;
-	});
-}
-
-

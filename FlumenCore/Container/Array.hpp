@@ -57,6 +57,10 @@ namespace container
 		virtual void* GetData() {return (void*)objects_;}
 
 	public:
+		friend Iterator <O> begin(Array <O> &array) {return {array, array.GetStart()};}
+
+        friend Iterator <O> end(Array <O> &array) {return {array, array.GetEnd()};}
+
 		Array() : objects_(nullptr), size_(0), capacity_(0), memorySize_(0) {}
 
 		Array(int capacity) : capacity_(capacity), size_(0)
@@ -290,9 +294,5 @@ namespace container
 
 			//MemoryLog::accrue(-memorySize_);
 		}
-
-		friend Iterator <O> begin(Array <O> &array) {return {array, array.GetStart()};}
-
-        friend Iterator <O> end(Array <O> &array) {return {array, array.GetEnd()};}
 	};
 }

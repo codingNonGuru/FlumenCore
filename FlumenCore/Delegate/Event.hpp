@@ -15,10 +15,14 @@ public:
         callback.bind(object, function);
     }
 
-    template <class ClassType, class ObjectType>
 	Event(void (*function)())
     {
         callback.bind(function);
+    }
+
+    bool operator==(const Event &other)
+    {
+        return (callback == other.callback);
     }
 
     void Invoke()

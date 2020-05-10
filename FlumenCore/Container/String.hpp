@@ -72,6 +72,16 @@ namespace container
 			return *this;
 		}
 
+		String operator *(int count)
+		{
+			auto copy = String();
+			for(int i = 0; i < count; ++i)
+			{
+				copy << *this;
+			}
+			return copy;
+		}
+
 		char* Get()
 		{
 			return values_;

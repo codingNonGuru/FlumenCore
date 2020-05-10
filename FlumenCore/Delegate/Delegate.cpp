@@ -1,28 +1,66 @@
 #include "Delegate.hpp"
+#include "Event.hpp"
 
 Delegate::Delegate()
 {
-	callbacks_.Initialize(8);
+	events.Initialize(8);
 }
 
 void Delegate::Invoke()
 {
-	callbacks_.Do([](auto &callback) -> bool
+	for(auto &event : events)
 	{
-		callback();
-	});
+		event.Invoke();
+	}
 }
 
-void Delegate::Add(void (*function)())
+Delegate& Delegate::operator += (Event _event)
 {
-	auto callback = callbacks_.Add();
-	if(callback == nullptr)
-		return;
+	auto event = events.Add();
 
-	callback->bind(function);
+	*event = _event;
+
+	return *this;
+}
+
+Delegate& Delegate::operator += (void (*callback)())
+{
+	auto event = events.Add();
+
+	*event = callback;
+
+	return *this;
+}
+
+Delegate& Delegate::operator -= (Event _event)
+{
+	for(auto &event : events)
+	{
+		if(event == _event)
+		{
+			events.Remove(&event);
+			break;
+		}
+	}
+
+	return *this;
+}
+
+Delegate& Delegate::operator -= (void (*callback)())
+{
+	for(auto &event : events)
+	{
+		if(event == callback)
+		{
+			events.Remove(&event);
+			break;
+		}
+	}
+
+	return *this;
 }
 
 void Delegate::Clear()
 {
-	callbacks_.Reset();
+	events.Reset();
 }

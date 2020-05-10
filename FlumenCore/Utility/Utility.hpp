@@ -25,6 +25,8 @@ namespace utility
 
 	void Clamp(float &, float = 0.0f, float = 1.0f);
 
+	void Clamp(int &, int, int);
+
 	float ComputeSign(Float2 &, Float2 &, Float2 &);
 
 	bool IsInsideTriangle(Float2 &, Float2 &, Float2 &, Float2 &);
