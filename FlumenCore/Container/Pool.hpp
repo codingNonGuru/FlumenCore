@@ -8,78 +8,10 @@
 namespace container
 {
 	typedef int IndexType;
-
-	/*template<class ObjectType>
-	class Iterator
-	{
-		friend class Pool <ObjectType>;
-
-		const Pool <ObjectType> &pool;
-
-		ObjectType *object;
-
-		bool *validator;
-
-		Iterator(const Pool <ObjectType> &_pool) : pool(_pool)
-		{
-			object = pool.objects_;
-			validator = pool.validators;
-
-			if(*validator == false)
-			{
-				(*this)++;
-			}
-		}
-
-	public:
-		Iterator <ObjectType> & operator++()
-		{
-			while(true)
-			{
-				object++;
-				validator++;
-
-				if(*validator)
-				{
-					break;
-				}
-
-				if(object == pool.GetEnd())
-				{
-					object = nullptr;
-					break;
-				}
-			}
-
-			return *this;
-		}
-
-		operator bool()
-		{
-			return object != nullptr;
-		}
-
-		ObjectType & operator *()
-		{
-			return *object;
-		}
-
-		ObjectType * operator ->()
-		{
-			return object;
-		}
-
-		operator ObjectType *()
-		{
-			return object;
-		}
-	};*/
 	
 	template<class ObjectType>
 	class Pool
 	{
-		//friend class Iterator <ObjectType>;
-
 		template<class IteratorType>
 		class Iterator
 		{
@@ -169,10 +101,6 @@ namespace container
 
 		void Remove(ObjectType *const object);
 
-		ObjectType* Get(IndexType index);
-
-		//Iterator <ObjectType> GetIterator();
-
 		void Do(std::function <bool (ObjectType &)>);
 
 		IndexType GetSize();
@@ -259,28 +187,10 @@ namespace container
 	}
 
 	template<class ObjectType>
-	ObjectType* Pool<ObjectType>::Get(IndexType index)
-	{
-		return objects_ + index;
-	}
-
-	/*template<class ObjectType>
-	ObjectType* Pool<ObjectType>::GetStart()
-	{
-		return objects_;
-	}*/
-
-	template<class ObjectType>
 	ObjectType* Pool<ObjectType>::GetEnd()
 	{
 		return (objects_ + capacity_);
 	}
-
-	/*template<class ObjectType>
-	Iterator <ObjectType> Pool<ObjectType>::GetIterator()
-	{
-		return Iterator <ObjectType> (*this);
-	}*/
 
 	template<class ObjectType>
 	void Pool<ObjectType>::Do(std::function <bool (ObjectType &)> work)
