@@ -2,6 +2,8 @@
 
 #include <functional>
 
+#include "FlumenCore/Container/Array.hpp"
+
 #define BREAK return true;
 #define CONTINUE return false;
 
@@ -106,6 +108,8 @@ namespace container
 		IndexType GetSize();
 
 		IndexType GetCapacity();
+
+		ObjectType * GetRandom();
 
 		float GetFillPercentage();
 
@@ -216,6 +220,20 @@ namespace container
 	IndexType Pool<ObjectType>::GetCapacity()
 	{
 		return capacity_;
+	}
+
+	template<class ObjectType>
+	ObjectType * Pool<ObjectType>::GetRandom()
+	{
+		static auto objects = Array <ObjectType *> (capacity_);
+		objects.Reset();
+
+		for(auto &object : *this)
+		{
+			*objects.Allocate() = &object;
+		}
+
+		return *objects.GetRandom();
 	}
 
 	template<class ObjectType>
