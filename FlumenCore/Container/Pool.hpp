@@ -3,6 +3,7 @@
 #include <functional>
 
 #include "FlumenCore/Container/Array.hpp"
+#include "FlumenCore/Container/PoolAllocator.h"
 
 #define BREAK return true;
 #define CONTINUE return false;
@@ -94,7 +95,11 @@ namespace container
 
 		Pool(IndexType capacity);
 
+		Pool(PoolAllocator<ObjectType> &allocator);
+
 		void Initialize(IndexType capacity);
+
+		void Initialize(PoolAllocator<ObjectType> &allocator);
 
 		ObjectType * Add();
 
@@ -114,6 +119,8 @@ namespace container
 		float GetFillPercentage();
 
 		void Reset();
+
+		void Terminate(PoolAllocator<ObjectType> &allocator);
 	};
 
 	template<class ObjectType>
@@ -133,6 +140,20 @@ namespace container
 	}
 
 	template<class ObjectType>
+	Pool<ObjectType>::Pool(PoolAllocator <ObjectType> &allocator)
+	{
+		auto memorySlot = allocator.Add();
+
+		objects_ = memorySlot.Objects;
+		indices_ = memorySlot.FreeIndices;
+		validators = memorySlot.Checks;
+
+		capacity_ = allocator.objectsPerPool;
+
+		Reset();
+	}
+
+	template<class ObjectType>
 	void Pool<ObjectType>::Initialize(IndexType capacity)
 	{
 		capacity_ = capacity;
@@ -141,6 +162,20 @@ namespace container
 		indices_ = new IndexType[capacity_];
 		validators = new bool[capacity_];
 		
+		Reset();
+	}
+
+	template<class ObjectType>
+	void Pool<ObjectType>::Initialize(PoolAllocator <ObjectType> &allocator)
+	{
+		auto memorySlot = allocator.Add();
+
+		objects_ = memorySlot.Objects;
+		indices_ = memorySlot.FreeIndices;
+		validators = memorySlot.Checks;
+
+		capacity_ = allocator.objectsPerPool;
+
 		Reset();
 	}
 
@@ -257,5 +292,18 @@ namespace container
 		{
 			*validator = false;
 		}
+	}
+
+	template<class ObjectType>
+	void Pool<ObjectType>::Terminate(PoolAllocator<ObjectType> &allocator)
+	{
+		allocator.Remove(objects_);
+
+		objects_ = nullptr;
+		indices_ = nullptr;
+		validators = nullptr;
+
+		capacity_ = 0;
+		size_ = 0;
 	}
 }
