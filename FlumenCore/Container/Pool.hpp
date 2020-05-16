@@ -116,6 +116,8 @@ namespace container
 
 		ObjectType * GetRandom();
 
+		ObjectType * Find(ObjectType);
+
 		float GetFillPercentage();
 
 		void Reset();
@@ -269,6 +271,18 @@ namespace container
 		}
 
 		return *objects.GetRandom();
+	}
+
+	template<class ObjectType>
+	ObjectType * Pool<ObjectType>::Find(ObjectType comparator)
+	{
+		for(auto &object : *this)
+		{
+			if(object == comparator)
+				return &object;
+		}
+
+		return nullptr;
 	}
 
 	template<class ObjectType>
