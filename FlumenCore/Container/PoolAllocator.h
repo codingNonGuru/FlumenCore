@@ -76,7 +76,7 @@ namespace container
 
             this->poolMemoryCapacity = this->objectsPerPool * sizeof(ObjectType);
 
-            objects = malloc(this->objectsPerAllocator * sizeof(ObjectType));
+            objects = new ObjectType[this->objectsPerAllocator];
 
             objectIndices = malloc(this->objectsPerAllocator * sizeof(int));
 
@@ -86,7 +86,7 @@ namespace container
 
             poolChecks = malloc(this->poolsPerAllocator * sizeof(bool));
 
-            this->freePoolIndex = this->objectsPerAllocator - 1;
+            this->freePoolIndex = this->poolsPerAllocator - 1;
 
             this->size = 0;
 

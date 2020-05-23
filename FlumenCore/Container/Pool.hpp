@@ -20,17 +20,17 @@ namespace container
 		{
 			friend class Pool <IteratorType>;
 
-			friend Iterator <IteratorType> begin(Pool <IteratorType> &pool);
+			friend Iterator <IteratorType> begin(const Pool <IteratorType> &pool);
 
-			friend Iterator <IteratorType> end(Pool <IteratorType> &pool);
+			friend Iterator <IteratorType> end(const Pool <IteratorType> &pool);
 
-			Pool <IteratorType> &pool;
+			const Pool <IteratorType> &pool;
 
 			IteratorType *element;
 
 			bool *check;
 
-			Iterator(Pool <IteratorType> &_pool, IteratorType *_element) : 
+			Iterator(const Pool <IteratorType> &_pool, IteratorType *_element) : 
 				pool(_pool), element(_element), check(pool.validators)
 			{
 				if(*check == false)
@@ -40,7 +40,7 @@ namespace container
 				}
 			}
 
-			Iterator(Pool <IteratorType> &_pool) : 
+			Iterator(const Pool <IteratorType> &_pool) : 
 				pool(_pool), element(pool.GetEnd()), check(nullptr)
 			{}
 
@@ -65,6 +65,16 @@ namespace container
 
 				return *this;
 			}
+
+			IteratorType * operator ->()
+			{
+				return element;
+			}
+
+			operator IteratorType *()
+			{
+				return element;
+			}
 		};
 
 	private:
@@ -82,14 +92,12 @@ namespace container
 
 		unsigned long memorySize_;
 
-		ObjectType* GetStart();
-
-		ObjectType* GetEnd();
+		ObjectType* GetEnd() const;
 
 	public:
-		friend Iterator <ObjectType> begin(Pool <ObjectType> &pool) {return {pool, pool.objects_};}
+		friend Iterator <ObjectType> begin(const Pool <ObjectType> &pool) {return {pool, pool.objects_};}
 
-        friend Iterator <ObjectType> end(Pool <ObjectType> &pool) {return {pool};}
+        friend Iterator <ObjectType> end(const Pool <ObjectType> &pool) {return {pool};}
 
 		Pool();
 
@@ -110,15 +118,21 @@ namespace container
 
 		void Do(std::function <bool (ObjectType &)>);
 
-		IndexType GetSize();
+		IndexType GetSize() const;
 
-		IndexType GetCapacity();
+		IndexType GetCapacity() const;
 
-		ObjectType * GetRandom();
+		float GetFillPercentage();
+
+		Iterator <ObjectType> GetStart() const {return {*this, objects_};}
+
+		ObjectType * Get(int);
 
 		ObjectType * Find(ObjectType);
 
-		float GetFillPercentage();
+		ObjectType * GetRandom();
+
+		int GetIndex(ObjectType *) const;
 
 		void Reset();
 
@@ -228,7 +242,7 @@ namespace container
 	}
 
 	template<class ObjectType>
-	ObjectType* Pool<ObjectType>::GetEnd()
+	ObjectType* Pool<ObjectType>::GetEnd() const
 	{
 		return (objects_ + capacity_);
 	}
@@ -248,13 +262,13 @@ namespace container
 	}
 
 	template<class ObjectType>
-	IndexType Pool<ObjectType>::GetSize()
+	IndexType Pool<ObjectType>::GetSize() const
 	{
 		return size_;
 	}
 
 	template<class ObjectType>
-	IndexType Pool<ObjectType>::GetCapacity()
+	IndexType Pool<ObjectType>::GetCapacity() const
 	{
 		return capacity_;
 	}
@@ -274,6 +288,19 @@ namespace container
 	}
 
 	template<class ObjectType>
+	ObjectType * Pool<ObjectType>::Get(int index)
+	{
+		auto counter = 0;
+		for(auto &object : *this)
+		{
+			if(counter == index)
+				return &object;
+
+			counter++;
+		}
+	}
+
+	template<class ObjectType>
 	ObjectType * Pool<ObjectType>::Find(ObjectType comparator)
 	{
 		for(auto &object : *this)
@@ -283,6 +310,21 @@ namespace container
 		}
 
 		return nullptr;
+	}
+
+	template<class ObjectType>
+	int Pool<ObjectType>::GetIndex(ObjectType *object) const
+	{
+		auto counter = 0;
+		for(auto &iterator : *this)
+		{
+			if(&iterator == object)
+				return counter;
+			
+			counter++;
+		}
+
+		return -1;
 	}
 
 	template<class ObjectType>
