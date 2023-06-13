@@ -5,11 +5,18 @@
 #include <functional>
 
 #include "FlumenCore/Container/Container.hpp"
+#include "FlumenCore/Container/ArrayAllocator.h"
 
 #include "FlumenCore/Utility/Utility.hpp"
 
 namespace container
 {
+	template<typename T, typename S>
+	concept Comparable = requires(T a, S b)
+	{
+		a.operator==(b);
+	};
+
 	template<class O>
 	class Array : public Container
 	{
@@ -18,15 +25,15 @@ namespace container
         {
             friend class Array <IteratorType>;
 
-            friend Iterator <IteratorType> begin(Array <IteratorType> &array);
+            friend Iterator <IteratorType> begin(const Array <IteratorType> &array);
 
-            friend Iterator <IteratorType> end(Array <IteratorType> &array);
+            friend Iterator <IteratorType> end(const Array <IteratorType> &array);
 
-            Array <IteratorType> &array;
+            const Array <IteratorType> &array;
 
             IteratorType *element;
 
-            Iterator(Array <IteratorType> &_array, IteratorType *_element) : 
+            Iterator(const Array <IteratorType> &_array, IteratorType *_element) : 
                 array(_array), element(_element)
             {}
 
@@ -44,6 +51,16 @@ namespace container
 
                 return *this;
             }
+
+			IteratorType * operator ->()
+			{
+				return element;
+			}
+
+			operator IteratorType *()
+			{
+				return element;
+			}
         };
 
 		O* objects_;
@@ -57,9 +74,9 @@ namespace container
 		virtual void* GetData() {return (void*)objects_;}
 
 	public:
-		friend Iterator <O> begin(Array <O> &array) {return {array, array.GetStart()};}
+		friend Iterator <O> begin(const Array <O> &array) {return {array, array.GetStart()};}
 
-        friend Iterator <O> end(Array <O> &array) {return {array, array.GetEnd()};}
+        friend Iterator <O> end(const Array <O> &array) {return {array, array.GetEnd()};}
 
 		Array() : objects_(nullptr), size_(0), capacity_(0), memorySize_(0) {}
 
@@ -85,6 +102,17 @@ namespace container
 			}
 		}
 
+		Array(ArrayAllocator <O> &allocator)
+		{
+			auto memorySlot = allocator.Add();
+
+			objects_ = memorySlot.Objects;
+
+			capacity_ = allocator.objectsPerArray;
+
+			Reset();
+		}
+
 		void Initialize(int capacity) 
 		{
 			capacity_ = capacity;
@@ -94,6 +122,17 @@ namespace container
 			objects_ = (O*)malloc(memorySize_); //new O[capacity_];
 
 			//MemoryLog::accrue(memorySize_);
+		}
+
+		void Initialize(ArrayAllocator <O> &allocator)
+		{
+			auto memorySlot = allocator.Add();
+
+			objects_ = memorySlot.Objects;
+
+			capacity_ = allocator.objectsPerArray;
+
+			Reset();
 		}
 
 		void Reset()
@@ -181,7 +220,8 @@ namespace container
 			return objects_ + index;
 		}
 
-		O* Find(O object) const
+		template<typename ComparatorType> requires Comparable<O, ComparatorType>
+		O* Find(ComparatorType object) const
 		{
 			for(auto iterator = GetStart(); iterator != GetEnd(); ++iterator)
 			{
@@ -263,6 +303,16 @@ namespace container
 					}
 				}
 			}
+		}
+
+		void Terminate(ArrayAllocator <O> &allocator)
+		{
+			allocator.Remove(objects_);
+
+			objects_ = nullptr;
+
+			capacity_ = 0;
+			size_ = 0;
 		}
 
 		int GetSize() const

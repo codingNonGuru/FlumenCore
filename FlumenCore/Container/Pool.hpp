@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <concepts>
 
 #include "FlumenCore/Container/Array.hpp"
 #include "FlumenCore/Container/PoolAllocator.h"
@@ -11,6 +12,12 @@
 namespace container
 {
 	typedef int IndexType;
+
+	/*template<typename T, typename S>
+	concept Comparable = requires(T a, S b)
+	{
+		a.operator==(b);
+	};*/
 	
 	template<class ObjectType>
 	class Pool
@@ -128,7 +135,8 @@ namespace container
 
 		ObjectType * Get(int);
 
-		ObjectType * Find(ObjectType);
+		template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+		ObjectType * Find(ComparatorType);
 
 		ObjectType * GetRandom();
 
@@ -301,7 +309,8 @@ namespace container
 	}
 
 	template<class ObjectType>
-	ObjectType * Pool<ObjectType>::Find(ObjectType comparator)
+	template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+	ObjectType * Pool<ObjectType>::Find(ComparatorType comparator)
 	{
 		for(auto &object : *this)
 		{

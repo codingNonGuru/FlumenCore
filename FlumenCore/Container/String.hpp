@@ -113,6 +113,11 @@ namespace container
 			return strcmp(other.Get(), this->Get()) == 0;
 		}
 
+		bool operator == (const char * other)
+		{
+			return strcmp(other, this->Get()) == 0;
+		}
+
 		//~String() 
 		//{
 			//std::cout<<(void*)values_<<"\n";
