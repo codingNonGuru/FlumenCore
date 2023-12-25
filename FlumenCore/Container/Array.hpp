@@ -78,6 +78,21 @@ namespace container
 
         friend Iterator <O> end(const Array <O> &array) {return {array, array.GetEnd()};}
 
+		struct Memory
+		{
+			O *Objects;
+
+			int Capacity;
+		};
+
+		static const Memory PreallocateMemory(int capacity)
+		{
+			auto memorySize = capacity * sizeof(O);
+			auto objects = (O*)malloc(memorySize);	
+
+			return {objects, capacity};
+		}
+
 		Array() : objects_(nullptr), size_(0), capacity_(0), memorySize_(0) {}
 
 		Array(int capacity) : capacity_(capacity), size_(0)
@@ -133,6 +148,16 @@ namespace container
 			capacity_ = allocator.objectsPerArray;
 
 			Reset();
+		}
+
+		void Initialize(int capacity, const Memory memory) 
+		{
+			capacity_ = capacity;
+			size_ = 0;
+			memorySize_ = capacity_ * sizeof(O);
+			objects_ = memory.Objects; //new O[capacity_];
+
+			//MemoryLog::accrue(memorySize_);
 		}
 
 		void Reset()

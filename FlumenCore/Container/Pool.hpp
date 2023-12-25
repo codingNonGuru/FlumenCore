@@ -106,15 +106,32 @@ namespace container
 
         friend Iterator <ObjectType> end(const Pool <ObjectType> &pool) {return {pool};}
 
+		struct Memory
+		{
+			ObjectType *Objects;
+
+			bool *Validators;
+
+			IndexType *Indices;
+
+			IndexType Capacity;
+		};
+
+		static const Memory PreallocateMemory(IndexType);
+
 		Pool();
 
 		Pool(IndexType capacity);
 
 		Pool(PoolAllocator<ObjectType> &allocator);
 
+		Pool(int, const Memory);
+
 		void Initialize(IndexType capacity);
 
 		void Initialize(PoolAllocator<ObjectType> &allocator);
+
+		void Initialize(int, const Memory);
 
 		ObjectType * Add();
 
@@ -148,6 +165,16 @@ namespace container
 	};
 
 	template<class ObjectType>
+	const typename Pool<ObjectType>::Memory Pool<ObjectType>::PreallocateMemory(IndexType capacity)
+	{
+		auto objects = new ObjectType[capacity];
+		auto indices = new IndexType[capacity];
+		auto validators = new bool[capacity];
+
+		return {objects, validators, indices, capacity};
+	}
+
+	template<class ObjectType>
 	Pool<ObjectType>::Pool()
 	{
 	}
@@ -178,6 +205,19 @@ namespace container
 	}
 
 	template<class ObjectType>
+	Pool<ObjectType>::Pool(int capacity, const Pool<ObjectType>::Memory memory)
+	{
+		capacity_ = capacity;
+
+		memorySize_ = capacity * sizeof(ObjectType);
+		objects_ = memory.Objects;
+		indices_ = memory.Indices;
+		validators = memory.Validators;
+
+		Reset();
+	}
+
+	template<class ObjectType>
 	void Pool<ObjectType>::Initialize(IndexType capacity)
 	{
 		capacity_ = capacity;
@@ -199,6 +239,19 @@ namespace container
 		validators = memorySlot.Checks;
 
 		capacity_ = allocator.objectsPerPool;
+
+		Reset();
+	}
+
+	template<class ObjectType>
+	void Pool<ObjectType>::Initialize(int capacity, const Pool<ObjectType>::Memory memory) 
+	{
+		capacity_ = capacity;
+
+		memorySize_ = capacity * sizeof(ObjectType);
+		objects_ = new ObjectType[capacity_];
+		indices_ = new IndexType[capacity_];
+		validators = new bool[capacity_];
 
 		Reset();
 	}

@@ -66,6 +66,36 @@ namespace container
         }
 
     public:
+        struct Memory
+        {
+            ObjectType *Objects;
+
+            int *ObjectIndices;
+
+            bool *ObjectChecks;
+
+            int *PoolIndices;
+
+            bool *PoolChecks;
+        };
+
+        static const Memory PreallocateMemory(int poolsPerAllocator, int objectsPerPool) 
+        {
+            auto objectsPerAllocator = poolsPerAllocator * objectsPerPool;
+
+            ObjectType *objects = new ObjectType[objectsPerAllocator];
+
+            int *objectIndices = malloc(objectsPerAllocator * sizeof(int));
+
+            bool *objectChecks = malloc(objectsPerAllocator * sizeof(bool));
+
+            int *poolIndices = malloc(poolsPerAllocator * sizeof(int));
+
+            bool *poolChecks = malloc(poolsPerAllocator * sizeof(bool));
+
+            return {objects, objectIndices, objectChecks, poolIndices, poolChecks};
+        }
+
         PoolAllocator() : objects(nullptr), objectIndices(nullptr), objectChecks(nullptr) {}
 
         PoolAllocator(int poolsPerAllocator, int objectsPerPool)
@@ -87,6 +117,41 @@ namespace container
             poolIndices = malloc(this->poolsPerAllocator * sizeof(int));
 
             poolChecks = malloc(this->poolsPerAllocator * sizeof(bool));
+
+            this->freePoolIndex = this->poolsPerAllocator - 1;
+
+            this->size = 0;
+
+            for(int index = 0; index < this->poolsPerAllocator; ++index)
+            {
+                *(poolIndices + index) = index;
+            }
+
+            for(auto check = poolChecks; check != poolChecks + this->poolsPerAllocator; ++check)
+            {
+                *check = false;
+            }
+        }
+
+        PoolAllocator(int poolsPerAllocator, int objectsPerPool, const Memory memory)
+        {
+            this->poolsPerAllocator = poolsPerAllocator;
+
+            this->objectsPerPool = objectsPerPool;
+            
+            this->objectsPerAllocator = this->poolsPerAllocator * this->objectsPerPool;
+
+            this->poolMemoryCapacity = this->objectsPerPool * sizeof(ObjectType);
+
+            objects = memory.Objects;
+
+            objectIndices = memory.ObjectIndices;
+
+            objectChecks = memory.ObjectChecks;
+
+            poolIndices = memory.PoolIndices;
+
+            poolChecks = memory.PoolChecks;
 
             this->freePoolIndex = this->poolsPerAllocator - 1;
 

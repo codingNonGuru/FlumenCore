@@ -16,6 +16,17 @@ namespace container
 			Pair(Value* value, Key* key) {Value_ = value; Key_ = key;}
 		};
 
+		struct Iterator
+		{
+			Value Value_;
+
+			Key Key_;
+
+			Iterator() {}
+
+			Iterator(Value value, Key key) {Value_ = value; Key_ = key;}
+		};
+
 		Key* keys_;
 
 		Value* values_;
@@ -30,6 +41,21 @@ namespace container
 		StaticMap(int capacity)
 		{
 			Initialize(capacity);
+		}
+
+		StaticMap(std::initializer_list <Iterator> list)
+		{
+			Initialize(list.size());
+
+			size_ = list.size();
+
+			auto key = keys_;
+			auto value = values_;
+			for(auto iterator = list.begin(); iterator != list.end(); ++iterator, ++key, ++value)
+			{
+				*key = iterator->Key_;
+				*value = iterator->Value_;
+			}
 		}
 
 		void Initialize(int capacity)

@@ -21,6 +21,20 @@ namespace container
 		bool isBounded;
 
 	public:
+		struct Memory
+		{
+			ObjectType *Objects;
+
+			int Capacity;
+		};
+
+		static const Memory PreallocateMemory(int capacity)
+		{
+			auto objects = (ObjectType *)malloc(capacity * sizeof(ObjectType));
+
+			return {objects, capacity};
+		}
+
 		ObjectType* operator() (int x, int y)
 		{
 			return Get(x, y);
@@ -150,6 +164,19 @@ namespace container
 
 			memorySize_ = objectCount_ * sizeof(ObjectType);
 			//MemoryLog::accrue(memorySize_);
+
+			isBounded = false;
+		}
+
+		void Initialize(int columnCount, int rowCount, const Memory memory)
+		{
+			objectCount_ = rowCount * columnCount;
+			objects_ = memory.Objects;
+
+			width_ = columnCount;
+			height_ = rowCount;
+
+			memorySize_ = objectCount_ * sizeof(ObjectType);
 
 			isBounded = false;
 		}
