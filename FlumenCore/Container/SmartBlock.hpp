@@ -4,7 +4,7 @@
 
 namespace container
 {
-    template <class ObjectType, int Capacity>
+    template <typename ObjectType, int Capacity>
     class SmartBlock
     {   
         Block <ObjectType, Capacity> block;
@@ -13,6 +13,8 @@ namespace container
 
     public:
         SmartBlock() : size(0) {}
+
+        int GetSize() const {return size;}
 
         ObjectType * Get(int index)
         {
@@ -54,6 +56,11 @@ namespace container
             size++;
 
             return object;
+        }
+
+        void Clear()
+        {
+            size = 0;
         }
     };
 }
