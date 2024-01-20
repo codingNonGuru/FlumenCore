@@ -12,12 +12,6 @@
 namespace container
 {
 	typedef int IndexType;
-
-	/*template<typename T, typename S>
-	concept Comparable = requires(T a, S b)
-	{
-		a.operator==(b);
-	};*/
 	
 	template<class ObjectType>
 	class Pool
@@ -56,7 +50,24 @@ namespace container
 
 			bool operator !=(const Iterator<IteratorType> &other) {return element != other.element;}
 
-			Iterator<IteratorType> & operator++() 
+			Iterator& operator++() 
+			{
+				while(true)
+				{
+					if(element == pool.GetEnd())
+						break;
+
+					element++;
+					check++;
+
+					if(*check == true)
+						break;
+				}
+
+				return *this;
+			}
+
+			Iterator operator++(int) 
 			{
 				while(true)
 				{
@@ -138,7 +149,10 @@ namespace container
 		template<class DerivedType>
 		ObjectType * Add();
 
-		void Remove(ObjectType *const object);
+		void RemoveAt(ObjectType *const object);
+
+		template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+		void Remove(ComparatorType);
 
 		void Do(std::function <bool (ObjectType &)>);
 
@@ -155,9 +169,14 @@ namespace container
 		template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
 		ObjectType * Find(ComparatorType);
 
-		ObjectType * GetRandom();
+		template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+		ObjectType * Find(ComparatorType) const;
+
+		ObjectType * GetRandom() const;
 
 		int GetIndex(ObjectType *) const;
+
+		bool IsFull() const {return size_ == capacity_;}
 
 		void Reset();
 
@@ -293,13 +312,24 @@ namespace container
 	}
 
 	template<class ObjectType>
-	void Pool<ObjectType>::Remove(ObjectType *const object)
+	void Pool<ObjectType>::RemoveAt(ObjectType *const object)
 	{
 		IndexType index = object - objects_;
 		*(validators + index) = false;
 		freeIndex_++;
 		*(indices_ + freeIndex_) = index;
 		size_--;
+	}
+
+	template<class ObjectType>
+	template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+	void Pool<ObjectType>::Remove(ComparatorType object)
+	{
+		auto objectLocation = Find(object);
+		if(objectLocation != nullptr)
+		{
+			RemoveAt(objectLocation);
+		}
 	}
 
 	template<class ObjectType>
@@ -335,8 +365,13 @@ namespace container
 	}
 
 	template<class ObjectType>
-	ObjectType * Pool<ObjectType>::GetRandom()
+	ObjectType * Pool<ObjectType>::GetRandom() const
 	{
+		if(size_ == 0)
+		{
+			return nullptr;
+		}
+
 		static auto objects = Array <ObjectType *> (capacity_);
 		objects.Reset();
 
@@ -359,11 +394,26 @@ namespace container
 
 			counter++;
 		}
+
+		return nullptr;
 	}
 
 	template<class ObjectType>
 	template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
 	ObjectType * Pool<ObjectType>::Find(ComparatorType comparator)
+	{
+		for(auto &object : *this)
+		{
+			if(object == comparator)
+				return &object;
+		}
+
+		return nullptr;
+	}
+
+	template<class ObjectType>
+	template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+	ObjectType * Pool<ObjectType>::Find(ComparatorType comparator) const
 	{
 		for(auto &object : *this)
 		{

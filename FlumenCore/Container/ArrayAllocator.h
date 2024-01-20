@@ -56,6 +56,28 @@ namespace container
         }
 
     public:
+        struct Memory
+        {
+            ObjectType *Objects;
+
+            int *ArrayIndices;
+
+            bool *ArrayChecks;
+        };
+
+        static const Memory PreallocateMemory(int arraysPerAllocator, int objectsPerArray) 
+        {
+            auto objectsPerAllocator = arraysPerAllocator * objectsPerArray;
+
+            ObjectType *objects = new ObjectType[objectsPerAllocator];
+
+            int *arrayIndices = (int *)malloc(arraysPerAllocator * sizeof(int));
+
+            bool *arrayChecks = (bool *)malloc(arraysPerAllocator * sizeof(bool));
+
+            return {objects, arrayIndices, arrayChecks};
+        }
+
         ArrayAllocator() : objects(nullptr), arrayChecks(nullptr), arrayIndices(nullptr) {}
 
         ArrayAllocator(int arraysPerAllocator, int objectsPerArray)
@@ -70,9 +92,40 @@ namespace container
 
             objects = new ObjectType[this->objectsPerAllocator];
 
-            arrayIndices = malloc(this->arraysPerAllocator * sizeof(int));
+            arrayIndices = (int *)malloc(this->arraysPerAllocator * sizeof(int));
 
-            arrayChecks = malloc(this->arraysPerAllocator * sizeof(bool));
+            arrayChecks = (bool *)malloc(this->arraysPerAllocator * sizeof(bool));
+
+            this->freeArrayIndex = this->arraysPerAllocator - 1;
+
+            this->size = 0;
+
+            for(int index = 0; index < this->arraysPerAllocator; ++index)
+            {
+                *(arrayIndices + index) = index;
+            }
+
+            for(auto check = arrayChecks; check != arrayChecks + this->arraysPerAllocator; ++check)
+            {
+                *check = false;
+            }
+        }
+
+        ArrayAllocator(int arraysPerAllocator, int objectsPerArray, const Memory memory)
+        {
+            this->arraysPerAllocator = arraysPerAllocator;
+
+            this->objectsPerArray = objectsPerArray;
+            
+            this->objectsPerAllocator = this->arraysPerAllocator * this->objectsPerArray;
+
+            this->arrayMemoryCapacity = this->objectsPerArray * sizeof(ObjectType);
+
+            objects = memory.Objects;
+
+            arrayIndices = memory.ArrayIndices;
+
+            arrayChecks = memory.ArrayChecks;
 
             this->freeArrayIndex = this->arraysPerAllocator - 1;
 

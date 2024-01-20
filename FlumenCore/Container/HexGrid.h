@@ -13,13 +13,15 @@ namespace container
     {
         class NearbyBuffer : public core::Singleton <NearbyBuffer>
         {
+            friend class core::Singleton <NearbyBuffer>;
+
             friend class HexGrid;
 
-            Array <core::hex::Tile *> tiles;
+            container::Array <TileType *> tiles;
 
             NearbyBuffer()
             {
-                tiles.Initialize(1024);
+                tiles.Initialize(4096);
             }
         };
 
@@ -67,7 +69,7 @@ namespace container
             return tiles;
         }
 
-        const Array<TileType *> & GetNearbyTiles(TileType *tile, Integer range)
+        const Array <TileType *> &GetNearbyTiles(TileType *tile, Integer range)
         {
             auto &nearbyTiles = NearbyBuffer::Get()->tiles;
             nearbyTiles.Reset();
@@ -80,10 +82,37 @@ namespace container
                     {
                         if(x + y + z == 0)
                         {
-                            auto nearbyTile = GetTile(tile->HexCoordinates + Integer3(x, y, z));
+                            auto nearbyTile = GetTile(tile->Coordinates + Integer3(x, y, z));
                             if(nearbyTile != nullptr)
                             {
                                 *nearbyTiles.Allocate() = nearbyTile;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return nearbyTiles;
+        }
+
+        const container::Block <TileType *, 6> GetNearbyTiles(TileType* tile)
+        {
+            auto nearbyTiles = container::Block <TileType *, 6> ();
+
+            int i = 0;
+            for(Integer x = -1; x <= 1; ++x)
+            {
+                for(Integer y = -1; y <= 1; ++y)
+                {
+                    for(Integer z = -1; z <= 1; ++z)
+                    {
+                        if(x + y + z == 0)
+                        {
+                            auto nearbyTile = GetTile(tile->Coordinates + Integer3(x, y, z));
+                            if(nearbyTile != nullptr && nearbyTile != tile)
+                            {
+                                *nearbyTiles[i] = nearbyTile;
+                                i++;
                             }
                         }
                     }
@@ -106,7 +135,7 @@ namespace container
                     {
                         if(x + y + z == 0 && abs(x) + abs(y) + abs(z) == range * 2)
                         {
-                            auto nearbyTile = GetTile(tile->HexCoordinates + Integer3(x, y, z));
+                            auto nearbyTile = GetTile(tile->Coordinates + Integer3(x, y, z));
                             if(nearbyTile != nullptr)
                             {
                                 *nearbyTiles.Allocate() = nearbyTile;

@@ -25,8 +25,18 @@ public:
         return (callback == other.callback);
     }
 
+    bool IsValid()
+    {
+        return callback.empty() == false;
+    }
+
     void Invoke()
     {
         callback();
+    }
+
+    void Clear()
+    {
+        callback.clear();
     }
 };

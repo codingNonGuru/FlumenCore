@@ -48,12 +48,12 @@ void DebugGl(const char* file, int line)
 	GLint maxMessageLength = 0;
 	glGetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxMessageLength);
 
-	GLchar* msgData = malloc(sizeof(GLchar) * numMsgs * maxMessageLength);
-	GLenum* sources = malloc(sizeof(GLenum) * numMsgs);
-	GLenum* types = malloc(sizeof(GLenum) * numMsgs);
-	GLenum* severities = malloc(sizeof(GLenum) * numMsgs);
-	GLuint* ids = malloc(sizeof(GLuint) * numMsgs);
-	GLsizei* lengths = malloc(sizeof(GLsizei) * numMsgs);
+	GLchar* msgData = (GLchar *)malloc(sizeof(GLchar) * numMsgs * maxMessageLength);
+	GLenum* sources = (GLenum *)malloc(sizeof(GLenum) * numMsgs);
+	GLenum* types = (GLenum *)malloc(sizeof(GLenum) * numMsgs);
+	GLenum* severities = (GLenum *)malloc(sizeof(GLenum) * numMsgs);
+	GLuint* ids = (GLuint *)malloc(sizeof(GLuint) * numMsgs);
+	GLsizei* lengths = (GLsizei *)malloc(sizeof(GLsizei) * numMsgs);
 
 	GLuint numFound = glGetDebugMessageLog(numMsgs, numMsgs * maxMessageLength, sources, types, ids, severities, lengths, msgData);
 

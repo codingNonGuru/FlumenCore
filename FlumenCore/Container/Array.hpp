@@ -3,6 +3,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <functional>
+#include <concepts>
 
 #include "FlumenCore/Container/Container.hpp"
 #include "FlumenCore/Container/ArrayAllocator.h"
@@ -14,7 +15,8 @@ namespace container
 	template<typename T, typename S>
 	concept Comparable = requires(T a, S b)
 	{
-		a.operator==(b);
+		{a == b} -> std::convertible_to <bool>;
+		{b == a} -> std::convertible_to <bool>;
 	};
 
 	template<class O>
@@ -257,7 +259,7 @@ namespace container
 			return nullptr;
 		}
 
-		O* GetRandom()
+		O* GetRandom() const
 		{
 			if(size_ == 0)
 				return nullptr;

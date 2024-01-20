@@ -67,7 +67,8 @@ namespace container
 
             Node *AddNode(Type content)
             {
-                auto address = Parent->nodes.Add();
+                auto &nodes = Parent->nodes;
+                auto address = nodes.Add();
 
                 *address = Node(content, Parent, this);
 

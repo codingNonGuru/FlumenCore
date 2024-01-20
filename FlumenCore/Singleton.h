@@ -8,19 +8,22 @@ namespace core
         static ObjectType *instance;
 
     protected:
-        Singleton()
+        Singleton() 
         {
-            instance = this;
+            if(instance == nullptr)
+            {
+                instance = static_cast <ObjectType *>(this);
+            }
         }
 
         Singleton(Singleton &) = delete;
 
     public:
-        static ObjectType * Get()
+        static ObjectType *Get()
         {
             if(instance == nullptr)
             {
-                return new ObjectType();
+                instance = new ObjectType();
             }
 
             return instance;
@@ -28,5 +31,5 @@ namespace core
     };
 
     template <class ObjectType>
-    ObjectType * Singleton<ObjectType>::instance = nullptr;
+    ObjectType *Singleton<ObjectType>::instance = nullptr;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <initializer_list>
+
 namespace container
 {
 	template<class Value, class Key>
@@ -65,6 +67,20 @@ namespace container
 
 			keys_ = new Key[capacity];
 			values_ = new Value[capacity];
+		}
+
+		void Initialize(int capacity, Value defaultValue)
+		{
+			size_ = 0;
+			capacity_ = capacity;
+
+			keys_ = new Key[capacity];
+			values_ = new Value[capacity];
+
+			for(auto value = values_; value != values_ + capacity; ++value)
+			{
+				*value = defaultValue;
+			}
 		}
 
 		int GetSize() const

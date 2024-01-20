@@ -85,13 +85,13 @@ namespace container
 
             ObjectType *objects = new ObjectType[objectsPerAllocator];
 
-            int *objectIndices = malloc(objectsPerAllocator * sizeof(int));
+            int *objectIndices = (int *)malloc(objectsPerAllocator * sizeof(int));
 
-            bool *objectChecks = malloc(objectsPerAllocator * sizeof(bool));
+            bool *objectChecks = (bool *)malloc(objectsPerAllocator * sizeof(bool));
 
-            int *poolIndices = malloc(poolsPerAllocator * sizeof(int));
+            int *poolIndices = (int *)malloc(poolsPerAllocator * sizeof(int));
 
-            bool *poolChecks = malloc(poolsPerAllocator * sizeof(bool));
+            bool *poolChecks = (bool *)malloc(poolsPerAllocator * sizeof(bool));
 
             return {objects, objectIndices, objectChecks, poolIndices, poolChecks};
         }
@@ -110,13 +110,13 @@ namespace container
 
             objects = new ObjectType[this->objectsPerAllocator];
 
-            objectIndices = malloc(this->objectsPerAllocator * sizeof(int));
+            objectIndices = (int *)malloc(this->objectsPerAllocator * sizeof(int));
 
-            objectChecks = malloc(this->objectsPerAllocator * sizeof(bool));
+            objectChecks = (bool *)malloc(this->objectsPerAllocator * sizeof(bool));
 
-            poolIndices = malloc(this->poolsPerAllocator * sizeof(int));
+            poolIndices = (int *)malloc(this->poolsPerAllocator * sizeof(int));
 
-            poolChecks = malloc(this->poolsPerAllocator * sizeof(bool));
+            poolChecks = (bool *)malloc(this->poolsPerAllocator * sizeof(bool));
 
             this->freePoolIndex = this->poolsPerAllocator - 1;
 

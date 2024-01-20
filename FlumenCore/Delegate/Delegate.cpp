@@ -38,7 +38,7 @@ Delegate& Delegate::operator -= (Event _event)
 	{
 		if(event == _event)
 		{
-			events.Remove(&event);
+			events.RemoveAt(&event);
 			break;
 		}
 	}
@@ -52,7 +52,7 @@ Delegate& Delegate::operator -= (void (*callback)())
 	{
 		if(event == callback)
 		{
-			events.Remove(&event);
+			events.RemoveAt(&event);
 			break;
 		}
 	}

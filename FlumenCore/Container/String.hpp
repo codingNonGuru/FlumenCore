@@ -30,6 +30,14 @@ namespace container
 			size_ = strlen(values);
 		}
 
+		String(int value)
+		{
+			char valueString[32];
+			sprintf(valueString, "%d", value);
+			size_ = 0;
+			Add(valueString, 32);
+		}
+
 		void Add(const char* string)
 		{
 			Add(string, strlen(string));
@@ -103,7 +111,34 @@ namespace container
 			return characters;
 		}
 
-		operator const char*()
+		void Capitalize(int index = 0)
+		{
+			char character = values_[index];
+			character -= 32;
+			*(values_ + index) = character;
+		}
+
+		void CapitalizeAll()
+		{
+			for(int i = 0; i < size_; ++i)
+			{
+				auto character = values_[i];
+
+				if(character >= 97 && character <= 122)
+				{
+					character -= 32;
+				}
+
+				values_[i] = character;
+			}
+		}
+
+		operator const char *()
+		{
+			return values_;
+		}
+
+		operator const char *() const
 		{
 			return values_;
 		}

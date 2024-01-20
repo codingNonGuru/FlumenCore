@@ -40,7 +40,7 @@ namespace container
 			return Get(x, y);
 		}
 
-		ObjectType* Get(int x, int y)
+		ObjectType* Get(int x, int y) const
 		{
 			if(x < 0)
 			{
@@ -75,12 +75,12 @@ namespace container
 			return objects_ + (width_ * y + x);
 		}
 
-		ObjectType* GetStart()
+		ObjectType* GetStart() const
 		{
 			return objects_;
 		}
 
-		ObjectType* GetEnd()
+		ObjectType* GetEnd() const
 		{
 			return objects_ + objectCount_;
 		}
@@ -100,12 +100,12 @@ namespace container
 			return (void*)objects_;
 		}
 
-		virtual unsigned long GetMemorySize()
+		virtual unsigned long GetMemorySize() const override
 		{
 			return memorySize_;
 		}
 
-		virtual unsigned long GetMemoryCapacity()
+		virtual unsigned long GetMemoryCapacity() const override
 		{
 			return memorySize_;
 		}
