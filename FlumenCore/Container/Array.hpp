@@ -71,8 +71,6 @@ namespace container
 
 		int size_;
 
-		unsigned long memorySize_;
-
 		virtual void* GetData() {return (void*)objects_;}
 
 	public:
@@ -95,12 +93,12 @@ namespace container
 			return {objects, capacity};
 		}
 
-		Array() : objects_(nullptr), size_(0), capacity_(0), memorySize_(0) {}
+		Array() : objects_(nullptr), size_(0), capacity_(0) {}
 
 		Array(int capacity) : capacity_(capacity), size_(0)
 		{
-			memorySize_ = capacity_ * sizeof(O);
-			objects_ = (O*)malloc(memorySize_);// new O[capacity_];
+			auto memorySize = capacity_ * sizeof(O);
+			objects_ = (O*)malloc(memorySize);// new O[capacity_];
 
 			//MemoryLog::accrue(memorySize_);
 		}
@@ -109,8 +107,8 @@ namespace container
 		{
 			size_ = list.size();
 			capacity_ = list.size();
-			memorySize_ = list.size() * sizeof(O);
-			objects_ = (O*)malloc(memorySize_);
+			auto memorySize = list.size() * sizeof(O);
+			objects_ = (O*)malloc(memorySize);
 
 			auto object = objects_;
 			for(auto iterator = list.begin(); iterator != list.end(); ++iterator, ++object)
@@ -135,8 +133,8 @@ namespace container
 			capacity_ = capacity;
 			size_ = 0;
 			Destroy();
-			memorySize_ = capacity_ * sizeof(O);
-			objects_ = (O*)malloc(memorySize_); //new O[capacity_];
+			auto memorySize = capacity_ * sizeof(O);
+			objects_ = (O*)malloc(memorySize); //new O[capacity_];
 
 			//MemoryLog::accrue(memorySize_);
 		}
@@ -156,7 +154,6 @@ namespace container
 		{
 			capacity_ = capacity;
 			size_ = 0;
-			memorySize_ = capacity_ * sizeof(O);
 			objects_ = memory.Objects; //new O[capacity_];
 
 			//MemoryLog::accrue(memorySize_);

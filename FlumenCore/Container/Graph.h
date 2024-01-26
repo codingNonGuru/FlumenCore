@@ -34,7 +34,7 @@ namespace container
             friend class Graph;
 
         private:
-            const Graph *Parent;
+            Graph *Parent;
 
             Node *PreviousNode;
 
@@ -60,7 +60,7 @@ namespace container
         public:
             Type Content;
 
-            Node(Type content, const Graph *parent, Node *previousNode = nullptr) : Content(content), Parent(parent), PreviousNode(previousNode)
+            Node(Type content, Graph *parent, Node *previousNode = nullptr) : Content(content), Parent(parent), PreviousNode(previousNode)
             {
                 NextNodes.Clear();
             }

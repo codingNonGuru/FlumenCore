@@ -108,8 +108,6 @@ namespace container
 
 		bool* validators;
 
-		unsigned long memorySize_;
-
 		ObjectType* GetEnd() const;
 
 	public:
@@ -201,7 +199,6 @@ namespace container
 	template<class ObjectType>
 	Pool<ObjectType>::Pool(IndexType capacity) : capacity_(capacity)
 	{
-		memorySize_ = capacity_ * sizeof(ObjectType);
 		objects_ = new ObjectType[capacity_];
 		indices_ = new IndexType[capacity_];
 		validators = new bool[capacity_];
@@ -228,7 +225,6 @@ namespace container
 	{
 		capacity_ = capacity;
 
-		memorySize_ = capacity * sizeof(ObjectType);
 		objects_ = memory.Objects;
 		indices_ = memory.Indices;
 		validators = memory.Validators;
@@ -240,7 +236,6 @@ namespace container
 	void Pool<ObjectType>::Initialize(IndexType capacity)
 	{
 		capacity_ = capacity;
-		memorySize_ = capacity_ * sizeof(ObjectType);
 		objects_ = new ObjectType[capacity_];
 		indices_ = new IndexType[capacity_];
 		validators = new bool[capacity_];
@@ -267,7 +262,6 @@ namespace container
 	{
 		capacity_ = capacity;
 
-		memorySize_ = capacity * sizeof(ObjectType);
 		objects_ = new ObjectType[capacity_];
 		indices_ = new IndexType[capacity_];
 		validators = new bool[capacity_];

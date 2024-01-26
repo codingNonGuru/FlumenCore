@@ -48,7 +48,29 @@ typedef glm::vec2 Scale2;
 typedef glm::ivec2 Size;
 typedef glm::mat4 Matrix;
 typedef int DrawOrder;
-typedef float Opacity;
+
+struct Opacity
+{
+	float Value;
+
+	Opacity() {}
+
+	explicit Opacity(float value) : Value(value) {}
+
+	//Opacity(bool) = delete;
+
+	//Opacity(const char * const) = delete;
+
+	operator float() {return Value;}
+
+	float &Get() {return Value;}
+
+	float operator *(const float &value) const {return Value * value;}
+
+	Opacity operator *(const Opacity &opacity) const {return Opacity(Value * opacity.Value);}
+
+	Opacity &operator=(const float &value) {Value = value;}
+};
 
 typedef unsigned int Index;
 typedef unsigned int Length;
