@@ -111,7 +111,13 @@ namespace container
 		ObjectType* GetEnd() const;
 
 	public:
-		friend Iterator <ObjectType> begin(const Pool <ObjectType> &pool) {return {pool, pool.objects_};}
+		friend Iterator <ObjectType> begin(const Pool <ObjectType> &pool) 
+		{
+			if(pool.GetSize() == 0)
+				return {pool};
+			else
+				return {pool, pool.objects_};
+		}
 
         friend Iterator <ObjectType> end(const Pool <ObjectType> &pool) {return {pool};}
 
