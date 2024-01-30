@@ -95,6 +95,11 @@ namespace container
 			return height_;
 		}
 
+		int GetObjectCount() const
+		{
+			return width_ * height_;
+		}
+
 		void* GetData()
 		{
 			return (void*)objects_;

@@ -15,13 +15,13 @@ namespace container
 
 			const Block <ObjectType, Capacity> &block;
 
-			ObjectType const *element;
+			ObjectType *element;
 
-			Iterator(const Block <ObjectType, Capacity> &_block, ObjectType const *_element) : 
+			Iterator(const Block <ObjectType, Capacity> &_block, ObjectType *_element) : 
 				block(_block), element(_element) {}
 
 		public:
-			const ObjectType & operator *() {return *element;}
+			ObjectType &operator *() {return *element;}
 
 			bool operator !=(const Iterator &other) {return element != other.element;}
 

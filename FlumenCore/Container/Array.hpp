@@ -22,6 +22,7 @@ namespace container
 	template<class O>
 	class Array : public Container
 	{
+	public:
 		template<class IteratorType>
         class Iterator
         {
@@ -35,11 +36,11 @@ namespace container
 
             IteratorType *element;
 
-            Iterator(const Array <IteratorType> &_array, IteratorType *_element) : 
+        public:
+			Iterator(const Array <IteratorType> &_array, IteratorType *_element) : 
                 array(_array), element(_element)
             {}
 
-        public:
             IteratorType & operator *() {return *element;}
 
             bool operator !=(const Iterator<IteratorType> &other) {return element != other.element;}
@@ -65,6 +66,7 @@ namespace container
 			}
         };
 
+	private:
 		O* objects_;
 
 		int capacity_;

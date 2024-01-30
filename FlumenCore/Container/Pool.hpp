@@ -180,6 +180,8 @@ namespace container
 
 		int GetIndex(ObjectType *) const;
 
+		int GetIndex(ObjectType &) const;
+
 		bool IsFull() const {return size_ == capacity_;}
 
 		void Reset();
@@ -425,7 +427,7 @@ namespace container
 	}
 
 	template<class ObjectType>
-	int Pool<ObjectType>::GetIndex(ObjectType *object) const
+	int Pool<ObjectType>::GetIndex(ObjectType &object) const
 	{
 		auto counter = 0;
 		for(auto &iterator : *this)
@@ -437,6 +439,12 @@ namespace container
 		}
 
 		return -1;
+	}
+
+	template<class ObjectType>
+	int Pool<ObjectType>::GetIndex(ObjectType *object) const
+	{
+		return object - objects_;
 	}
 
 	template<class ObjectType>

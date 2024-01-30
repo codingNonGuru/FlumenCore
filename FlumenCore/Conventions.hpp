@@ -132,3 +132,10 @@ static constexpr auto PI = 3.1415926f;
 static constexpr auto TWO_PI = PI * 2.0f;
 
 static constexpr auto HALF_PI = PI * 0.5f;
+
+struct Rectangle
+{
+	Integer2 Position;
+
+	Integer2 Size;
+};
