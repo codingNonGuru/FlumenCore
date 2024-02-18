@@ -1,5 +1,7 @@
 #pragma once
 
+#include "FlumenCore/Utility/Utility.hpp"
+
 namespace container
 {
 	template <class ObjectType, int Capacity>
@@ -110,6 +112,12 @@ namespace container
 		ObjectType const *GetEnd() const
 		{
 			return &objects_[Capacity];
+		}
+
+		ObjectType *GetRandom()
+		{
+			constexpr auto limit = Capacity - 1;
+			return objects_ + utility::GetRandom(0, limit);
 		}
 	};
 }

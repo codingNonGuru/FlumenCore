@@ -18,6 +18,7 @@ namespace container
 			Pair(Value* value, Key* key) {Value_ = value; Key_ = key;}
 		};
 
+	public:
 		struct Iterator
 		{
 			Value Value_;
@@ -29,6 +30,7 @@ namespace container
 			Iterator(Value value, Key key) {Value_ = value; Key_ = key;}
 		};
 
+	private:
 		Key* keys_;
 
 		Value* values_;
@@ -152,6 +154,46 @@ namespace container
 			return keys_ + size_;
 		}
 
+		Pair FindLowestValue()
+		{
+			auto lowestValueIndex = 0;
+
+			if(size_ == 1)
+			{
+				return {values_ + lowestValueIndex, keys_ + lowestValueIndex};
+			}
+
+			for(auto i = 1; i < size_; ++i)
+			{
+				if(*(values_ + i) < *(values_ + lowestValueIndex))
+				{
+					lowestValueIndex = i;
+				}
+			}
+
+			return {values_ + lowestValueIndex, keys_ + lowestValueIndex};
+		}
+
+		Pair FindHighestValue()
+		{
+			auto lowestValueIndex = 0;
+
+			if(size_ == 1)
+			{
+				return {values_ + lowestValueIndex, keys_ + lowestValueIndex};
+			}
+
+			for(auto i = 1; i < size_; ++i)
+			{
+				if(*(values_ + i) > *(values_ + lowestValueIndex))
+				{
+					lowestValueIndex = i;
+				}
+			}
+
+			return {values_ + lowestValueIndex, keys_ + lowestValueIndex};
+		}
+
 		void Destroy()
 		{
 			if(keys_ != nullptr)
@@ -163,6 +205,11 @@ namespace container
 				delete[] values_;
 
 			values_ = nullptr;
+		}
+
+		void Reset()
+		{
+			size_ = 0;
 		}
 	};
 }

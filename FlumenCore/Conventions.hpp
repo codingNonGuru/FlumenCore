@@ -69,7 +69,7 @@ struct Opacity
 
 	Opacity operator *(const Opacity &opacity) const {return Opacity(Value * opacity.Value);}
 
-	Opacity &operator=(const float &value) {Value = value;}
+	Opacity &operator=(const float &value) {Value = value; return *this;}
 };
 
 typedef unsigned int Index;
@@ -138,4 +138,21 @@ struct Rectangle
 	Integer2 Position;
 
 	Integer2 Size;
+
+	bool IsInside(Integer2 location) const
+	{
+		if(location.x < Position.x)
+			return false;
+
+		if(location.x > Position.x + Size.x)
+			return false;
+
+		if(location.y < Position.y)
+			return false;
+
+		if(location.y > Position.y + Size.y)
+			return false;
+
+		return true;
+	}
 };

@@ -130,6 +130,15 @@ namespace container
 			Reset();
 		}
 
+		Array &operator=(const Array &array)
+		{
+			objects_ = array.objects_;
+			size_ = array.size_;
+			capacity_ = array.capacity_;
+
+			return *this;
+		}
+
 		void Initialize(int capacity) 
 		{
 			capacity_ = capacity;
@@ -211,20 +220,6 @@ namespace container
 		{
 			size_ = capacity_;
 		}
-
-		/*template<class DerivedType>
-		O * Add()
-		{
-			if(size_ == capacity_)
-				return nullptr;
-
-			O * newObject = (objects_ + size_);
-			//*newObject = DerivedType();
-			*(long*)newObject = *(long*)&DerivedType();
-			size_++;
-
-			return newObject;
-		}*/
 
 		O& operator[] (int index)
 		{

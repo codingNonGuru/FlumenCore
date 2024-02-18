@@ -71,10 +71,26 @@ namespace container
 			return *this;
 		}
 
+		String& operator << (char character)
+		{
+			Add(&character, 1);
+
+			return *this;
+		}
+
 		String& operator << (int value)
 		{
-			char valueString[32];
+			char valueString[16];
 			sprintf(valueString, "%d", value);
+			Add(valueString, strlen(valueString));
+
+			return *this;
+		}
+
+		String& operator << (unsigned int value)
+		{
+			char valueString[16];
+			sprintf(valueString, "%u", value);
 			Add(valueString, strlen(valueString));
 
 			return *this;
@@ -131,6 +147,13 @@ namespace container
 
 				values_[i] = character;
 			}
+		}
+
+		void Clear()
+		{
+			size_ = 0;
+
+			values_[0] = 0;
 		}
 
 		operator const char *()

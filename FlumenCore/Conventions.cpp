@@ -63,7 +63,7 @@ void DebugGl(const char* file, int line)
 	}
 
 	GLchar* message = msgData;
-	for(int i = 0; i < numFound; ++i)
+	for(auto i = 0; i < numFound; ++i)
 	{
 		std::cout<<message<<"\n";
 		message += strlen(message) + 1;
