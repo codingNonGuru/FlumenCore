@@ -25,12 +25,12 @@ public:
         return (callback == other.callback);
     }
 
-    bool IsValid()
+    bool IsValid() const
     {
         return callback.empty() == false;
     }
 
-    void Invoke()
+    void Invoke() const
     {
         callback();
     }

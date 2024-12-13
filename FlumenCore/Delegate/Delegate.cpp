@@ -6,7 +6,7 @@ Delegate::Delegate()
 	events.Initialize(8);
 }
 
-void Delegate::Invoke()
+void Delegate::Invoke() const
 {
 	for(auto &event : events)
 	{

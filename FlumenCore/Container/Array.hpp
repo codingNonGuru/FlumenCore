@@ -273,6 +273,11 @@ namespace container
 			return (objects_ + size_);
 		}
 
+		O* GetLast() const
+		{
+			return (objects_ + size_ - 1);
+		}
+
 		O* GetNext(O* object) const
 		{
 			auto index = object - objects_;
@@ -292,7 +297,7 @@ namespace container
 
 		void SortDescendantly()
 		{
-			for(int j = 0; j <= GetSize() / 2; ++j)
+			for(int j = 0; j < GetSize(); ++j)
 			{
 				for(int i = 0; i < GetSize() - 1; ++i)
 				{
@@ -310,7 +315,7 @@ namespace container
 
 		void SortAscendantly()
 		{
-			for(int j = 0; j <= GetSize() / 2; ++j)
+			for(int j = 0; j < GetSize(); ++j)
 			{
 				for(int i = 0; i < GetSize() - 1; ++i)
 				{

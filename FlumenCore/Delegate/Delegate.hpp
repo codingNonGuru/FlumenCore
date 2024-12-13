@@ -11,7 +11,7 @@ class Delegate
 public:
 	Delegate();
 
-	void Invoke();
+	void Invoke() const;
 
 	Delegate& operator += (Event);
 
