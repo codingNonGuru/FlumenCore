@@ -7,6 +7,50 @@ namespace container
 	template<class ObjectType>
 	class Grid : public Matrix
 	{
+	public:
+		template<class IteratorType>
+        class Iterator
+        {
+            friend class Grid <IteratorType>;
+
+            friend Iterator <IteratorType> begin(const Grid <IteratorType> &);
+
+            friend Iterator <IteratorType> end(const Grid <IteratorType> &);
+
+            const Grid <IteratorType> &grid;
+
+            IteratorType *element;
+
+        public:
+			Iterator(const Grid <IteratorType> &_grid, IteratorType *_element) : 
+                grid(_grid), element(_element)
+            {}
+
+            IteratorType & operator *() {return *element;}
+
+            bool operator !=(const Iterator <IteratorType> &other) {return element != other.element;}
+
+            Iterator <IteratorType> & operator++() 
+            {
+				if(element != grid.GetEnd())
+				{
+                	element++;
+				}
+
+                return *this;
+            }
+
+			IteratorType * operator ->()
+			{
+				return element;
+			}
+
+			operator IteratorType *()
+			{
+				return element;
+			}
+        };
+
 	private:
 		int height_;
 
@@ -21,6 +65,10 @@ namespace container
 		bool isBounded;
 
 	public:
+		friend Iterator <ObjectType> begin(const Grid <ObjectType> &grid) {return {grid, grid.GetStart()};}
+
+        friend Iterator <ObjectType> end(const Grid <ObjectType> &grid) {return {grid, grid.GetEnd()};}
+
 		struct Memory
 		{
 			ObjectType *Objects;

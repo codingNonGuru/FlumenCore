@@ -90,7 +90,7 @@ typedef container::String<32> Word;
 typedef container::String<64> LongWord;
 typedef container::String<256> Phrase;
 
-typedef container::String<32> FileName;
+typedef container::String<64> FileName;
 typedef container::String<256> FilePath;
 
 typedef container::Container Container;
