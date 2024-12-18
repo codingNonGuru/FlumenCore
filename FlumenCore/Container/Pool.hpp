@@ -176,6 +176,9 @@ namespace container
 		template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
 		ObjectType * Find(ComparatorType) const;
 
+		template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+		int GetCount(ComparatorType) const;
+
 		ObjectType * GetRandom() const;
 
 		int GetIndex(ObjectType *) const;
@@ -424,6 +427,21 @@ namespace container
 		}
 
 		return nullptr;
+	}
+
+	template<class ObjectType>
+	template<typename ComparatorType> requires Comparable<ObjectType, ComparatorType>
+	int Pool<ObjectType>::GetCount(ComparatorType comparator) const
+	{
+		int count = 0;
+
+		for(auto &object : *this)
+		{
+			if(object == comparator)
+				count++;
+		}
+
+		return count;
 	}
 
 	template<class ObjectType>
